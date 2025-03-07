@@ -23,10 +23,12 @@ interface SignUpCardProps {
 function SignUpCard({ setState }: SignUpCardProps) {
   const { signIn } = useAuthActions();
   const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [pending, setPending] = useState(false);
+
   const handlePasswordSignUp = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (password !== confirmPassword) {
@@ -34,16 +36,18 @@ function SignUpCard({ setState }: SignUpCardProps) {
       return;
     }
     setPending(true);
-    signIn("password", { email, password, flow: "signUp" })
+    signIn("password", { name, email, password, flow: "signUp" })
       .catch(() => {
         setError("Something went wrong please try again!");
       })
       .finally(() => setPending(false));
   };
+
   const handleProviderSignUp = (value: "github" | "google") => {
     setPending(true);
     signIn(value).finally(() => setPending(false));
   };
+
   return (
     <Card className="h-full w-full p-8">
       <CardHeader className="px-0 pt-0">
@@ -60,6 +64,14 @@ function SignUpCard({ setState }: SignUpCardProps) {
       )}
       <CardContent className="space-y-5 px-0 pb-0">
         <form onSubmit={handlePasswordSignUp} className="space-y-2.5">
+          <Input
+            disabled={pending}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Full name"
+            type="text"
+            required
+          />
           <Input
             disabled={pending}
             value={email}
