@@ -13,6 +13,7 @@ export default {
     extend: {
       colors: {
         customBg: "#5C3B58",
+        customBgNav: "#481349",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         card: {
