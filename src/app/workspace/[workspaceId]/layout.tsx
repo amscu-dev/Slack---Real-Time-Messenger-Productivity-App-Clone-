@@ -1,4 +1,5 @@
 "use client";
+import Sidebar from "./_components/sidebar";
 import Toolbar from "./_components/toolbar";
 
 interface WorkspaceIdLayoutProps {
@@ -9,7 +10,10 @@ function WorkspaceIdLayout({ children }: WorkspaceIdLayoutProps) {
   return (
     <div className="h-full">
       <Toolbar />
-      {children}
+      <div className="flex h-[calc(100vh-40px)]">
+        <Sidebar />
+        {children}
+      </div>
     </div>
   );
 }

@@ -14,6 +14,9 @@ export default {
       colors: {
         customBg: "#5C3B58",
         customBgNav: "#481349",
+        customColorButton: "#ABABAD",
+        customWorkspaceBgDropdownItem: "#F2F2F2",
+        customWorkspacesBgDropdownItem: "#616061",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         card: {
