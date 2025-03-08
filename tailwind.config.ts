@@ -17,6 +17,7 @@ export default {
         customColorButton: "#ABABAD",
         customWorkspaceBgDropdownItem: "#F2F2F2",
         customWorkspacesBgDropdownItem: "#616061",
+        customChannelsSidebar: "#5E2C5F",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         card: {
