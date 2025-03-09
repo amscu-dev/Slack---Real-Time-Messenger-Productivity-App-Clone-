@@ -19,6 +19,8 @@ import Hint from "@/components/hint";
 import PreferencesModal from "./preferences-modal";
 import { useAppDispatch } from "@/store/hooks/redux-store-hooks";
 import { onOpenPreferencesModal } from "@/store/slices/preferencesModalSlice";
+import { onOpenInviteModal } from "@/store/slices/inviteModalSlice";
+import InviteModal from "./invite-modal";
 
 interface WorkspaceHeaderProps {
   workspace: Doc<"workspaces">;
@@ -28,6 +30,7 @@ function WorkspaceHeader({ workspace, isAdmin }: WorkspaceHeaderProps) {
   const dispatch = useAppDispatch();
   return (
     <>
+      <InviteModal name={workspace.name} joinCode={workspace.joinCode} />
       <PreferencesModal initialValue={workspace.name} />
       <div className="flex items-center justify-between px-4 h-[49px] gap-0.5">
         <DropdownMenu>
@@ -61,7 +64,7 @@ function WorkspaceHeader({ workspace, isAdmin }: WorkspaceHeaderProps) {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   className="cursor-pointer py-2"
-                  onClick={() => {}}
+                  onClick={() => dispatch(onOpenInviteModal())}
                 >
                   <div className="flex items-center justify-center">
                     <Users className="!size-3 mr-2 font-normal" />

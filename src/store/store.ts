@@ -4,12 +4,13 @@ import { configureStore } from "@reduxjs/toolkit";
 import workspaceModalReducer from "@/store/slices/workspaceModalSlice";
 import preferencesModalReducer from "@/store/slices/preferencesModalSlice";
 import channelModalReducer from "@/store/slices/channelModalSlice";
+import inviteModalReducer from "@/store/slices/inviteModalSlice";
 export const store = configureStore({
   reducer: {
-    // command: commandReducer,
     workspaceModal: workspaceModalReducer,
     preferencesModal: preferencesModalReducer,
     channelModal: channelModalReducer,
+    inviteModal: inviteModalReducer,
   },
 });
 
