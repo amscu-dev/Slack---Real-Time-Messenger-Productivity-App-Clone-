@@ -4,7 +4,7 @@ import { useCallback, useMemo, useState } from "react";
 import { Id } from "../../../../convex/_generated/dataModel";
 
 // Incercam sa imitam comportamnetul React-Query
-type RequestType = { name: string };
+type RequestType = { id: Id<"workspaces">; name: string };
 type ResponseType = Id<"workspaces"> | null;
 // În acest type Options, proprietățile onSuccess, onError și onSettled sunt funcții definite ca proprietăți opționale ale obiectului options.
 // Definirea unei funcții ca proprietate într-un obiect este echivalentă cu definirea unei funcții normale și apelarea acesteia cu un argument.
@@ -15,7 +15,7 @@ type Options = {
   throwError?: boolean;
 };
 
-export const useCreateWorkspace = () => {
+export const useUpdateWorkspace = () => {
   const [data, setData] = useState<ResponseType>(null);
   const [error, setError] = useState<Error | null>(null);
 
@@ -34,7 +34,7 @@ export const useCreateWorkspace = () => {
   const isError = useMemo(() => status === "error", [status]);
   const isSettled = useMemo(() => status === "settled", [status]);
 
-  const mutation = useMutation(api.workspace.create);
+  const mutation = useMutation(api.workspace.update);
 
   // usecallback in caz ca o vom folosi intr-un useEffect
   const mutate = useCallback(

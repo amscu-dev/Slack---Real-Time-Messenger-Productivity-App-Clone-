@@ -18,6 +18,7 @@ export default {
         customWorkspaceBgDropdownItem: "#F2F2F2",
         customWorkspacesBgDropdownItem: "#616061",
         customChannelsSidebar: "#5E2C5F",
+        customTextColor: "#1264a3",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         card: {
