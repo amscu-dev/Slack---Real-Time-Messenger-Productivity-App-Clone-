@@ -1,7 +1,7 @@
 import Hint from "@/components/hint";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Plus, PlusIcon } from "lucide-react";
+import { PlusIcon } from "lucide-react";
 import { FaCaretDown } from "react-icons/fa";
 import { useToggle } from "react-use";
 interface WorkspaceSectionProps {

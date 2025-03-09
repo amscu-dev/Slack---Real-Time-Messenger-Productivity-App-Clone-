@@ -9,7 +9,6 @@ import {
   Loader,
   MessageSquareText,
   SendHorizonal,
-  Sidebar,
 } from "lucide-react";
 import WorkspaceHeader from "./workspace-header";
 import SidebarItem from "./sidebar-item";
@@ -17,8 +16,10 @@ import useGetChannels from "@/features/channels/api/use-get-channels";
 import WorkspaceSection from "./workspace-section";
 import { useGetMembers } from "@/features/members/api/use-get-members";
 import UserItem from "./user-item";
-
+import { useAppDispatch } from "@/store/hooks/redux-store-hooks";
+import { onOpenChannelModal } from "@/store/slices/channelModalSlice";
 function WorkspaceSidebar() {
+  const dispatch = useAppDispatch();
   const workspaceId = useWorkspaceId();
   const { data: member, isLoading: memberLoading } = useCurrentMember({
     workspaceId,
@@ -58,7 +59,15 @@ function WorkspaceSidebar() {
         <SidebarItem label="Threads" icon={MessageSquareText} id="threads" />
         <SidebarItem label="Drafts & Sent" icon={SendHorizonal} id="drafts" />
       </div>
-      <WorkspaceSection label="Channels" hint="New Channel" onNew={() => {}}>
+      <WorkspaceSection
+        label="Channels"
+        hint="New Channel"
+        onNew={
+          member.role === "admin"
+            ? () => dispatch(onOpenChannelModal())
+            : undefined
+        }
+      >
         {channels?.map((item) => (
           <SidebarItem
             key={item._id}
