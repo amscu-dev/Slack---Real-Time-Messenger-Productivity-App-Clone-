@@ -15,6 +15,7 @@ import Hint from "./hint";
 import { Delta, Op } from "quill/core";
 import { cn } from "@/lib/utils";
 import { current } from "@reduxjs/toolkit";
+import EmojiPopover from "./emoji-popover";
 
 type EditorValue = { image: File | null; body: string };
 
@@ -122,7 +123,10 @@ function Editor({
       toolbarElement.classList.toggle("hidden");
     }
   };
-
+  const onEmojiSelect = (emoji: any) => {
+    const quill = quillRef.current;
+    quill?.insertText(quill.getSelection()?.index || 0, emoji.native);
+  };
   // Doar acest state va monitoriza re-render-urile bazandu-ne pe schimbarile din quill editor
   const isEmpty = text.replace(/<(.|\n)*?>/g, "").trim().length === 0;
   return (
@@ -142,16 +146,12 @@ function Editor({
               <PiTextAa className="!size-4" />
             </Button>
           </Hint>
-          <Hint label="Emoji">
-            <Button
-              disabled={false}
-              size="iconSm"
-              variant="ghost"
-              onClick={() => {}}
-            >
+
+          <EmojiPopover onEmojiSelect={onEmojiSelect}>
+            <Button disabled={false} size="iconSm" variant="ghost">
               <Smile className="!size-4" />
             </Button>
-          </Hint>
+          </EmojiPopover>
 
           {variant === "create" && (
             <Hint label="Image">
