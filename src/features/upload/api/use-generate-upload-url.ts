@@ -1,18 +1,8 @@
 import { useMutation } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { useCallback, useMemo, useState } from "react";
-import { Id } from "../../../../convex/_generated/dataModel";
 
-// Incercam sa imitam comportamnetul React-Query
-type RequestType = {
-  body: string;
-  workspaceId: Id<"workspaces">;
-  image?: Id<"_storage">;
-  channelId?: Id<"channels">;
-  parentMessageId?: Id<"messages">;
-  conversationId?: Id<"conversations">;
-};
-type ResponseType = Id<"messages"> | null;
+type ResponseType = string | null;
 // În acest type Options, proprietățile onSuccess, onError și onSettled sunt funcții definite ca proprietăți opționale ale obiectului options.
 // Definirea unei funcții ca proprietate într-un obiect este echivalentă cu definirea unei funcții normale și apelarea acesteia cu un argument.
 type Options = {
@@ -22,7 +12,7 @@ type Options = {
   throwError?: boolean;
 };
 
-export const useCreateMessage = () => {
+export const useGenerateUploadUrl = () => {
   const [data, setData] = useState<ResponseType>(null);
   const [error, setError] = useState<Error | null>(null);
 
@@ -41,11 +31,11 @@ export const useCreateMessage = () => {
   const isError = useMemo(() => status === "error", [status]);
   const isSettled = useMemo(() => status === "settled", [status]);
 
-  const mutation = useMutation(api.messages.create);
+  const mutation = useMutation(api.upload.generateUploadUrl);
 
   // usecallback in caz ca o vom folosi intr-un useEffect
   const mutate = useCallback(
-    async (values: RequestType, options?: Options) => {
+    async (_values: {}, options?: Options) => {
       try {
         setData(null);
         setError(null);
@@ -57,7 +47,7 @@ export const useCreateMessage = () => {
         // setIsSuccess(false);
 
         // setIsPending(true);
-        const response = await mutation(values);
+        const response = await mutation();
         options?.onSuccess?.(response);
         return response;
       } catch (error) {
