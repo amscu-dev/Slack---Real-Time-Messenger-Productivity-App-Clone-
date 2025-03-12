@@ -19,10 +19,12 @@ import UserItem from "./user-item";
 import { useAppDispatch } from "@/store/hooks/redux-store-hooks";
 import { onOpenChannelModal } from "@/store/slices/channelModalSlice";
 import { useChannelId } from "@/hooks/use-channel-id";
+import { useMemberId } from "@/hooks/use-member-id";
 function WorkspaceSidebar() {
   const dispatch = useAppDispatch();
   const workspaceId = useWorkspaceId();
   const channelId = useChannelId();
+  const memberId = useMemberId();
   const { data: member, isLoading: memberLoading } = useCurrentMember({
     workspaceId,
   });
@@ -91,6 +93,7 @@ function WorkspaceSidebar() {
             id={item._id}
             label={item.user.name}
             image={item.user.image}
+            variant={item._id === memberId ? "active" : "default"}
           />
         ))}
       </WorkspaceSection>
