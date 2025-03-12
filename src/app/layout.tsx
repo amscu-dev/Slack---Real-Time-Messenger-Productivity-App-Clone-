@@ -6,7 +6,7 @@ import "./globals.css";
 import StoreContextProvider from "@/components/providers/store-context-provider";
 import Modals from "@/components/modals/modals";
 import { Toaster } from "@/components/ui/sonner";
-
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -37,7 +37,7 @@ export default function RootLayout({
             <StoreContextProvider>
               <Modals />
               <Toaster />
-              {children}
+              <NuqsAdapter>{children}</NuqsAdapter>
             </StoreContextProvider>
           </ConvexClientProvider>
         </body>
