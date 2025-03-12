@@ -6,12 +6,19 @@ interface ThreadBarProps {
   count?: number;
   image?: string;
   timestamp?: number;
+  name?: string;
   onClick?: () => void;
 }
 
-function ThreadBar({ count, image, timestamp, onClick }: ThreadBarProps) {
+function ThreadBar({
+  count,
+  image,
+  timestamp,
+  onClick,
+  name = "Member",
+}: ThreadBarProps) {
   if (!count || !timestamp) return null;
-  // const avatarFallback = authorName?.charAt(0).toUpperCase();
+  const avatarFallback = name?.charAt(0).toUpperCase();
 
   return (
     <button
@@ -22,7 +29,7 @@ function ThreadBar({ count, image, timestamp, onClick }: ThreadBarProps) {
         <Avatar className="!size-6 shrink-0">
           <AvatarImage className="rounded-md" src={image} />
           <AvatarFallback className="rounded-md bg-sky-500 text-white text-xs">
-            M{/* {avatarFallback} */}
+            {avatarFallback}
           </AvatarFallback>
         </Avatar>
         <span className="text-xs text-sky-700 hover:underline font-bold truncate">

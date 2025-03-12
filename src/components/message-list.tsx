@@ -92,6 +92,7 @@ function MessageList({
                   createdAt={message._creationTime}
                   threadCount={message.threadCount}
                   threadImage={message.threadImage}
+                  threadName={message.threadName}
                   threadTimestamp={message.threadTimestamp}
                   isEditing={editingId === message._id}
                   setEditingId={setEditingId}

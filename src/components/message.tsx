@@ -43,6 +43,7 @@ interface MessageProps {
   hideThreadButton?: boolean;
   threadCount?: number;
   threadImage?: string;
+  threadName?: string;
   threadTimestamp?: number;
 }
 
@@ -63,9 +64,10 @@ function Message({
   hideThreadButton,
   threadCount,
   threadImage,
+  threadName,
   threadTimestamp,
 }: MessageProps) {
-  const { parentMessageId, onOpenMessage, onClose } = usePanel();
+  const { parentMessageId, onOpenMessage, onOpenProfile, onClose } = usePanel();
   const [ConfirmDialog, confirm] = useConfirm(
     "Delete message",
     "Are you sure you want to delete this message? This cannot be undone."
@@ -76,7 +78,7 @@ function Message({
     useRemoveMessage();
   const { mutate: toggleReaction, isPending: isTogglingReaction } =
     useToggleReaction();
-  const isPending = isUpdateMessage;
+  const isPending = isUpdateMessage || isTogglingReaction;
 
   const handleReaction = (value: string) => {
     toggleReaction(
@@ -164,6 +166,7 @@ function Message({
                 <ThreadBar
                   count={threadCount}
                   image={threadImage}
+                  name={threadName}
                   timestamp={threadTimestamp}
                   onClick={() => onOpenMessage(id)}
                 />
@@ -198,7 +201,7 @@ function Message({
         )}
       >
         <div className="flex items-start gap-2">
-          <button>
+          <button onClick={() => onOpenProfile(memberId)}>
             <Avatar className="rounded-md">
               <AvatarImage className="rounded-md" src={authorImage} />
               <AvatarFallback className="rounded-md bg-sky-500 text-white text-xs">
@@ -221,7 +224,7 @@ function Message({
               <div className="text-sm">
                 <button
                   className="font-bold text-primary hover:underline"
-                  onClick={() => {}}
+                  onClick={() => onOpenProfile(memberId)}
                 >
                   {authorName}
                 </button>
@@ -241,6 +244,7 @@ function Message({
               <ThreadBar
                 count={threadCount}
                 image={threadImage}
+                name={threadName}
                 timestamp={threadTimestamp}
                 onClick={() => onOpenMessage(id)}
               />

@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import { query, QueryCtx } from "./_generated/server";
+import { mutation, query, QueryCtx } from "./_generated/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { Id } from "./_generated/dataModel";
 
@@ -94,5 +94,74 @@ export const get = query({
     }
 
     return members;
+  },
+});
+
+export const update = mutation({
+  args: {
+    id: v.id("members"),
+    role: v.union(v.literal("admin"), v.literal("member")),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) {
+      throw new Error("Unauthorized");
+    }
+
+    const member = await ctx.db.get(args.id);
+    if (!member) {
+      throw new Error("Unauthorized");
+    }
+
+    const currentMember = await ctx.db
+      .query("members")
+      .withIndex("by_workspace_id_user_id", (q) =>
+        q.eq("workspaceId", member.workspaceId).eq("userId", userId)
+      )
+      .unique();
+    if (!currentMember || currentMember.role !== "admin") {
+      throw new Error("Unauthorized");
+    }
+
+    await ctx.db.patch(args.id, { role: args.role });
+
+    return args.id;
+  },
+});
+
+export const remove = mutation({
+  args: {
+    id: v.id("members"),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) {
+      throw new Error("Unauthorized");
+    }
+
+    const member = await ctx.db.get(args.id);
+    if (!member) {
+      throw new Error("Unauthorized");
+    }
+
+    const currentMember = await ctx.db
+      .query("members")
+      .withIndex("by_workspace_id_user_id", (q) =>
+        q.eq("workspaceId", member.workspaceId).eq("userId", userId)
+      )
+      .unique();
+    if (!currentMember) {
+      throw new Error("Unauthorized");
+    }
+
+    if ((member.role = "admin")) {
+      throw new Error("Admin cannot be removed");
+    }
+
+    if (currentMember._id === args.id && currentMember.role === "admin") {
+      throw new Error("Cannot remove self if self is an admin!");
+    }
+
+    return args.id;
   },
 });
