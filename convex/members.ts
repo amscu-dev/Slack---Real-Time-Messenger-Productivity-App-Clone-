@@ -143,6 +143,7 @@ export const remove = mutation({
     if (!member) {
       throw new Error("Unauthorized");
     }
+    console.log(member);
 
     const currentMember = await ctx.db
       .query("members")
@@ -153,8 +154,9 @@ export const remove = mutation({
     if (!currentMember) {
       throw new Error("Unauthorized");
     }
+    const isAdmin = member.role === "admin";
 
-    if ((member.role = "admin")) {
+    if (isAdmin) {
       throw new Error("Admin cannot be removed");
     }
 
