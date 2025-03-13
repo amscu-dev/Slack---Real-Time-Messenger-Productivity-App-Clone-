@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import Quill, { type QuillOptions } from "quill";
 import "quill/dist/quill.snow.css";
 import {
