@@ -43,6 +43,7 @@ function Thread({ messageId, onClose }: ThreadProps) {
   const [isPending, setIsPending] = useState(false);
 
   const editorRef = useRef<Quill | null>(null);
+  const isToolbarVisibleRef = useRef<boolean>(true);
 
   const [editingId, setEditingId] = useState<Id<"messages"> | null>(null);
 
@@ -260,6 +261,7 @@ function Thread({ messageId, onClose }: ThreadProps) {
           onSubmit={handleSubmit}
           disabled={isPending}
           placeholder="Reply..."
+          isToolbarVisibleRef={isToolbarVisibleRef}
         />
       </div>
     </div>
