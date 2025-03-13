@@ -14,12 +14,14 @@ import { FcGoogle } from "react-icons/fc";
 import { SingInFlow } from "../types";
 import { useState } from "react";
 import { useAuthActions } from "@convex-dev/auth/react";
-import { TriangleAlert } from "lucide-react";
+import { Eye, EyeOff, TriangleAlert } from "lucide-react";
 interface SignInCardProps {
   setState: (state: SingInFlow) => void;
 }
 
 function SignInCard({ setState }: SignInCardProps) {
+  // State pentru controlul vizibilității parolei
+  const [showPassword, setShowPassword] = useState(false);
   const { signIn } = useAuthActions();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -64,14 +66,32 @@ function SignInCard({ setState }: SignInCardProps) {
             type="email"
             required
           />
-          <Input
-            disabled={pending}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Password"
-            type="password"
-            required
-          />
+          <div className="relative">
+            <Input
+              disabled={pending}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="*******"
+              type={showPassword ? "text" : "password"}
+              required
+            />
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="absolute right-0 top-0 h-full px-3 py-2 text-gray-400 hover:text-gray-600"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? (
+                <EyeOff className="h-4 w-4" />
+              ) : (
+                <Eye className="h-4 w-4" />
+              )}
+              <span className="sr-only">
+                {showPassword ? "Hide password" : "Show password"}
+              </span>
+            </Button>
+          </div>
           <Button type="submit" className="w-full" size="lg" disabled={pending}>
             Continue
           </Button>

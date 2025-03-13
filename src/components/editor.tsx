@@ -27,6 +27,7 @@ interface EditorProps {
   defaultValue?: Delta | Op[];
   disabled?: boolean;
   innerRef?: MutableRefObject<Quill | null>;
+  isToolbarVisibleRef: MutableRefObject<boolean>;
 }
 
 function Editor({
@@ -37,6 +38,7 @@ function Editor({
   disabled = false,
   innerRef,
   variant = "create",
+  isToolbarVisibleRef,
 }: EditorProps) {
   const [text, setText] = useState("");
   const [image, setImage] = useState<File | null>(null);
@@ -104,6 +106,15 @@ function Editor({
     if (innerRef) {
       innerRef.current = quill;
     }
+    // Preserve Toolbar appearance
+    const toolbarElement = container.querySelector(".ql-toolbar");
+    if (toolbarElement) {
+      if (!isToolbarVisibleRef.current)
+        // Adăugăm sau eliminăm clasa "hidden" pe baza valorii toolbarVisibleRef
+        toolbarElement.classList.add("hidden");
+    }
+
+    // HIDE TOOLBAR
     quill.setContents(defaultValueRef.current);
     // Doar acest state va monitoriza re-render-urile bazandu-ne pe schimbarile din quill editor
     setText(quill.getText());
@@ -123,10 +134,11 @@ function Editor({
         innerRef.current = null;
       }
     };
-  }, [innerRef]);
+  }, [innerRef, isToolbarVisibleRef]);
 
   const toggleToolbar = () => {
     setIsToolbarVisible((current) => !current);
+    isToolbarVisibleRef.current = !isToolbarVisibleRef.current;
     const toolbarElement = containerRef.current?.querySelector(".ql-toolbar");
     if (toolbarElement) {
       toolbarElement.classList.toggle("hidden");

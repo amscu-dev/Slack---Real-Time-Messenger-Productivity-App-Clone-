@@ -24,7 +24,7 @@ type CreateMessageValues = {
 function ChatInput({ placeholder }: ChatInputProps) {
   const [editorKey, setEditorKey] = useState(0);
   const [isPending, setIsPending] = useState(false);
-
+  const isToolbarVisibleRef = useRef<boolean>(true);
   const editorRef = useRef<Quill | null>(null);
 
   const workspaceId = useWorkspaceId();
@@ -88,6 +88,7 @@ function ChatInput({ placeholder }: ChatInputProps) {
         onSubmit={handleSubmit}
         disabled={isPending}
         innerRef={editorRef}
+        isToolbarVisibleRef={isToolbarVisibleRef}
       />
     </div>
   );

@@ -13,7 +13,7 @@ import { FaGithub } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { SingInFlow } from "../types";
 import { useState } from "react";
-import { TriangleAlert } from "lucide-react";
+import { Eye, EyeOff, TriangleAlert } from "lucide-react";
 import { useAuthActions } from "@convex-dev/auth/react";
 
 interface SignUpCardProps {
@@ -21,6 +21,9 @@ interface SignUpCardProps {
 }
 
 function SignUpCard({ setState }: SignUpCardProps) {
+  // State pentru controlul vizibilității parolei
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const { signIn } = useAuthActions();
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
@@ -80,22 +83,58 @@ function SignUpCard({ setState }: SignUpCardProps) {
             type="email"
             required
           />
-          <Input
-            disabled={pending}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Password"
-            type="password"
-            required
-          />
-          <Input
-            disabled={pending}
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            placeholder="Confirm password"
-            type="password"
-            required
-          />
+          <div className="relative">
+            <Input
+              disabled={pending}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="*******"
+              type={showPassword ? "text" : "password"}
+              required
+            />
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="absolute right-0 top-0 h-full px-3 py-2 text-gray-400 hover:text-gray-600"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? (
+                <EyeOff className="h-4 w-4" />
+              ) : (
+                <Eye className="h-4 w-4" />
+              )}
+              <span className="sr-only">
+                {showPassword ? "Hide password" : "Show password"}
+              </span>
+            </Button>
+          </div>
+          <div className="relative">
+            <Input
+              disabled={pending}
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              placeholder="*******"
+              type={showConfirmPassword ? "text" : "password"}
+              required
+            />
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="absolute right-0 top-0 h-full px-3 py-2 text-gray-400 hover:text-gray-600"
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+            >
+              {showConfirmPassword ? (
+                <EyeOff className="h-4 w-4" />
+              ) : (
+                <Eye className="h-4 w-4" />
+              )}
+              <span className="sr-only">
+                {showConfirmPassword ? "Hide password" : "Show password"}
+              </span>
+            </Button>
+          </div>
           <Button type="submit" className="w-full" size="lg" disabled={pending}>
             Continue
           </Button>

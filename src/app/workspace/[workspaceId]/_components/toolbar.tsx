@@ -31,12 +31,12 @@ function Toolbar() {
 
   const onChannelClick = (channelId: string) => {
     setOpen(false);
-    router.push(`workspace/${workspaceId}/channel/${channelId}`);
+    router.push(`/workspace/${workspaceId}/channel/${channelId}`);
   };
 
   const onMemberClick = (memberId: string) => {
     setOpen(false);
-    router.push(`workspace/${workspaceId}/channel/${memberId}`);
+    router.push(`/workspace/${workspaceId}/member/${memberId}`);
   };
   return (
     <nav className="bg-customBgNav flex items-center justify-between h-10 p-1.5">
