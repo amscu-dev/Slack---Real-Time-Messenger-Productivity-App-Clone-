@@ -1,10 +1,10 @@
 "use client";
 
 import UserButton from "@/features/auth/components/user-button";
-import WorkspaceSwitcher from "./workspace-switcher";
-import SidebarButton from "./sidebar-button";
 import { BellIcon, Home, MessagesSquare, MoreHorizontal } from "lucide-react";
 import { usePathname } from "next/navigation";
+import SidebarButton from "./sidebar-button";
+import WorkspaceSwitcher from "./workspace-switcher";
 
 function Sidebar() {
   const pathname = usePathname();

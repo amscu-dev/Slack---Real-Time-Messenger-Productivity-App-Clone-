@@ -78,7 +78,6 @@ function Editor({
             enter: {
               key: "Enter",
               handler: () => {
-                // TODO Submit Form
                 const text = quill.getText();
                 const addedImage = imageElementRef.current?.files?.[0] || null;
                 const isEmpty =
@@ -106,7 +105,6 @@ function Editor({
     if (innerRef) {
       innerRef.current = quill;
     }
-    // Preserve Toolbar appearance
     const toolbarElement = container.querySelector(".ql-toolbar");
     if (toolbarElement) {
       if (!isToolbarVisibleRef.current)
@@ -114,7 +112,6 @@ function Editor({
         toolbarElement.classList.add("hidden");
     }
 
-    // HIDE TOOLBAR
     quill.setContents(defaultValueRef.current);
     // Doar acest state va monitoriza re-render-urile bazandu-ne pe schimbarile din quill editor
     setText(quill.getText());

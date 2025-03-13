@@ -11,36 +11,37 @@ import {
   DialogClose,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
-import { CircleCheckBig, Copy, CopyIcon, RefreshCcw } from "lucide-react";
-import { useWorkspaceId } from "@/hooks/use-workspace-id";
-import { toast } from "sonner";
-import { useState } from "react";
 import { useNewJoinCode } from "@/features/workspaces/api/use-new-join-code";
-import { cn } from "@/lib/utils";
 import useConfirm from "@/hooks/use-confirm";
+import { useWorkspaceId } from "@/hooks/use-workspace-id";
+import { cn } from "@/lib/utils";
+import { CircleCheckBig, CopyIcon, RefreshCcw } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
 
 interface InviteModalProps {
   name: string;
   joinCode: string;
 }
 function InviteModal({ name, joinCode }: InviteModalProps) {
+  // Hook-ul pentru a genera un nou cod de invitație
   const { mutate, isPending } = useNewJoinCode();
+  // Hook-ul pentru confirmare (arată un dialog de confirmare înainte de a regenera codul)
   const [ConfirmDialog, confirm] = useConfirm(
     "Are you sure?",
     "This will deactivate the current invite code and generate a new one."
   );
-  const [copied, setCopied] = useState(false);
+  const [copied, setCopied] = useState(false); // Starea care urmărește dacă link-ul a fost copiat în clipboard
   const { isOpen } = useAppSelector((state) => state.inviteModal);
-  const dispatch = useAppDispatch();
-  const workspaceId = useWorkspaceId();
+  const dispatch = useAppDispatch(); // Folosit pentru a trimite acțiuni către Redux store
+  const workspaceId = useWorkspaceId(); // Obține ID-ul workspace-ului curent
 
+  // Funcția care se execută când se regenerează un cod de invitație
   const handleNewCode = async () => {
-    const ok = await confirm();
+    const ok = await confirm(); // Așteaptă confirmarea utilizatorului
     if (!ok) return;
     mutate(
       { workspaceId },
@@ -54,23 +55,27 @@ function InviteModal({ name, joinCode }: InviteModalProps) {
       }
     );
   };
+
+  // Funcția care se execută la copierea link-ului
   const handleCopy = () => {
-    const inviteLink = `${window.location.origin}/join/${workspaceId}`;
-    // ✔ navigator.clipboard.writeText(inviteLink) – copiază string-ul în clipboard-ul utilizatorului.
-    // ✔ Utilizatorul poate acum lipi (paste) link-ul oriunde dorește.
-    // Este async
+    const inviteLink = `${window.location.origin}/join/${workspaceId}`; // Construiește link-ul de invitație
+    // Copiază link-ul în clipboard-ul utilizatorului
     navigator.clipboard.writeText(inviteLink).then(() => {
-      setCopied(true);
-      toast.success("Invite link copied to  clipboard");
+      setCopied(true); // Schimbă starea la "copiat"
+      toast.success("Invite link copied to clipboard");
     });
 
+    // Resetează starea "copiat" după 1.5 secunde
     setTimeout(() => {
       setCopied(false);
     }, 1500);
   };
+
+  // Funcția care închide modalul
   const handleClose = () => {
     dispatch(onCloseInviteModal());
   };
+
   return (
     <>
       <ConfirmDialog />

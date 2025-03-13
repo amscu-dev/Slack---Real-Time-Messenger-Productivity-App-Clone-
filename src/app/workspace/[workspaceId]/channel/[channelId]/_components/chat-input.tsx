@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import { useCreateMessage } from "@/features/messages/api/use-create-message";
 import { useGenerateUploadUrl } from "@/features/upload/api/use-generate-upload-url";
 import { useChannelId } from "@/hooks/use-channel-id";
@@ -22,17 +24,19 @@ type CreateMessageValues = {
 };
 
 function ChatInput({ placeholder }: ChatInputProps) {
-  const [editorKey, setEditorKey] = useState(0);
-  const [isPending, setIsPending] = useState(false);
-  const isToolbarVisibleRef = useRef<boolean>(true);
-  const editorRef = useRef<Quill | null>(null);
+  // Inițializăm stările pentru a urmări editorul și procesul de trimitere
+  const [editorKey, setEditorKey] = useState(0); // Folosit pentru a forța rerandarea editorului (resetarea input-ului)
+  const [isPending, setIsPending] = useState(false); // Starea care indică dacă mesajul este în proces de trimitere
+  const isToolbarVisibleRef = useRef<boolean>(true); // Referința pentru a urmări dacă bara de unelte este vizibilă
+  const editorRef = useRef<Quill | null>(null); // Referința pentru a manipula editorul Quill
 
-  const workspaceId = useWorkspaceId();
-  const channelId = useChannelId();
+  const workspaceId = useWorkspaceId(); // Obține ID-ul workspace-ului curent din URL
+  const channelId = useChannelId(); // Obține ID-ul canalului curent din URL
 
-  const { mutate: generateUploadUrl } = useGenerateUploadUrl();
-  const { mutate: createMessage } = useCreateMessage();
+  const { mutate: generateUploadUrl } = useGenerateUploadUrl(); // Funcția pentru a genera URL-ul de încărcare a fișierului
+  const { mutate: createMessage } = useCreateMessage(); // Funcția pentru a crea un mesaj în canalul curent
 
+  // Funcția care se execută la trimiterea unui mesaj
   const handleSubmit = async ({
     body,
     image,
@@ -41,8 +45,8 @@ function ChatInput({ placeholder }: ChatInputProps) {
     image: File | null;
   }) => {
     try {
-      setIsPending(true);
-      editorRef?.current?.enable(false);
+      setIsPending(true); // Activează starea de încărcare
+      editorRef?.current?.enable(false); // Dezactivează editorul pentru a preveni modificările în timpul încărcării
 
       const values: CreateMessageValues = {
         channelId,
@@ -51,24 +55,26 @@ function ChatInput({ placeholder }: ChatInputProps) {
         image: undefined,
       };
 
+      // Dacă există o imagine, o încărcăm pe server
       if (image) {
-        const url = await generateUploadUrl({}, { throwError: true });
+        const url = await generateUploadUrl({}, { throwError: true }); // Obținem URL-ul pentru încărcare
         if (!url) {
           throw new Error("Url not found");
         }
         const result = await fetch(url, {
           method: "POST",
           headers: { "Content-Type": image.type },
-          body: image,
+          body: image, // Trimitem imaginea
         });
 
         if (!result.ok) {
           throw new Error("Failed to upload image");
         }
 
-        const { storageId } = await result.json();
-        values.image = storageId;
+        const { storageId } = await result.json(); // Obținem ID-ul imaginii din răspunsul serverului
+        values.image = storageId; // Setăm ID-ul imaginii în obiectul de date
       }
+
       await createMessage(values, { throwError: true });
       setEditorKey((prevKey) => prevKey + 1);
     } catch (error) {

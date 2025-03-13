@@ -1,8 +1,16 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 "use client";
 
+import useGetChannels from "@/features/channels/api/use-get-channels";
 import { useCurrentMember } from "@/features/members/api/use-current-member";
+import { useGetMembers } from "@/features/members/api/use-get-members";
 import { useGetWorkspace } from "@/features/workspaces/api/use-get-workspace";
+import { useChannelId } from "@/hooks/use-channel-id";
+import { useMemberId } from "@/hooks/use-member-id";
 import { useWorkspaceId } from "@/hooks/use-workspace-id";
+import { useAppDispatch } from "@/store/hooks/redux-store-hooks";
+import { onOpenChannelModal } from "@/store/slices/channelModalSlice";
 import {
   AlertTriangle,
   HashIcon,
@@ -10,16 +18,11 @@ import {
   MessageSquareText,
   SendHorizonal,
 } from "lucide-react";
-import WorkspaceHeader from "./workspace-header";
 import SidebarItem from "./sidebar-item";
-import useGetChannels from "@/features/channels/api/use-get-channels";
-import WorkspaceSection from "./workspace-section";
-import { useGetMembers } from "@/features/members/api/use-get-members";
 import UserItem from "./user-item";
-import { useAppDispatch } from "@/store/hooks/redux-store-hooks";
-import { onOpenChannelModal } from "@/store/slices/channelModalSlice";
-import { useChannelId } from "@/hooks/use-channel-id";
-import { useMemberId } from "@/hooks/use-member-id";
+import WorkspaceHeader from "./workspace-header";
+import WorkspaceSection from "./workspace-section";
+
 function WorkspaceSidebar() {
   const dispatch = useAppDispatch();
   const workspaceId = useWorkspaceId();

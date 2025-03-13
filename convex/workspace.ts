@@ -2,6 +2,7 @@ import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
 
+// Funcție pentru generarea unui cod de 6 caractere, utilizată pentru workspace join
 const generateCode = () => {
   const code = Array.from(
     { length: 6 },
@@ -10,6 +11,7 @@ const generateCode = () => {
   return code;
 };
 
+// Mutație pentru acceptarea unui nou user pe baza join code
 export const join = mutation({
   args: {
     joinCode: v.string(),
@@ -20,13 +22,17 @@ export const join = mutation({
     if (userId === null) {
       throw new Error("Unauthorized");
     }
+
     const workspace = await ctx.db.get(args.workspaceId);
     if (!workspace) {
       throw new Error("Workspace not found");
     }
+
     if (workspace.joinCode !== args.joinCode.toLowerCase()) {
       throw new Error("Invalid join code");
     }
+
+    // Verifică dacă utilizatorul este deja membru
     const existingMember = await ctx.db
       .query("members")
       .withIndex("by_workspace_id_user_id", (q) =>
@@ -36,15 +42,19 @@ export const join = mutation({
     if (existingMember) {
       throw new Error("You are already a member to this workspace!");
     }
+
+    // Adaugă utilizatorul ca membru
     await ctx.db.insert("members", {
       userId,
       workspaceId: workspace._id,
       role: "member",
     });
+
     return workspace._id;
   },
 });
 
+// Mutație pentru generarea unui nou cod de join pentru workspace
 export const newJoinCode = mutation({
   args: { workspaceId: v.id("workspaces") },
   handler: async (ctx, args) => {
@@ -52,6 +62,8 @@ export const newJoinCode = mutation({
     if (userId === null) {
       throw new Error("Unauthorized");
     }
+
+    // Verifică dacă utilizatorul este admin al workspace-ului
     const member = await ctx.db
       .query("members")
       .withIndex("by_workspace_id_user_id", (q) =>
@@ -61,12 +73,16 @@ export const newJoinCode = mutation({
     if (!member || member.role !== "admin") {
       throw new Error("Unauthorized");
     }
+
+    // Generează un nou cod de join și îl salvează în baza de date
     const joinCode = generateCode();
     await ctx.db.patch(args.workspaceId, { joinCode });
+
     return args.workspaceId;
   },
 });
 
+// Mutație pentru crearea unui nou workspace
 export const create = mutation({
   args: { name: v.string() },
   handler: async (ctx, args) => {
@@ -74,18 +90,24 @@ export const create = mutation({
     if (userId === null) {
       throw new Error("Unauthorized");
     }
+
     const joinCode = generateCode();
-    // aici se va returna doar ID-ul workspace-ului creat
+
+    // Creează un workspace nou și îl adaugă în baza de date
     const workspaceId = await ctx.db.insert("workspaces", {
       name: args.name,
       userId,
       joinCode,
     });
+
+    // Adaugă utilizatorul ca admin al workspace-ului
     await ctx.db.insert("members", {
       userId,
       workspaceId,
       role: "admin",
     });
+
+    // Creează un canal 'general' pentru workspace
     await ctx.db.insert("channels", {
       name: "general",
       workspaceId,
@@ -95,6 +117,7 @@ export const create = mutation({
   },
 });
 
+// Interogare pentru obținerea workspace-urilor utilizatorului
 export const get = query({
   args: {},
   handler: async (ctx) => {
@@ -102,12 +125,17 @@ export const get = query({
     if (!userId) {
       return [];
     }
+
+    // Obține toate workspace-urile în care utilizatorul este membru
     const members = await ctx.db
       .query("members")
       .withIndex("by_user_id", (q) => q.eq("userId", userId))
       .collect();
+
     const workspaceIds = members.map((member) => member.workspaceId);
     const workspaces = [];
+
+    // Pentru fiecare workspace, obține detalii despre acesta
     for (const workspaceId of workspaceIds) {
       const workspace = await ctx.db.get(workspaceId);
       if (workspace) {
@@ -118,6 +146,7 @@ export const get = query({
   },
 });
 
+// Interogare pentru obținerea informațiilor unui workspace după ID
 export const getInfoByID = query({
   args: { id: v.id("workspaces") },
   handler: async (ctx, args) => {
@@ -125,13 +154,16 @@ export const getInfoByID = query({
     if (!userId) {
       throw new Error("Unauthorized");
     }
+
     const member = await ctx.db
       .query("members")
       .withIndex("by_workspace_id_user_id", (q) =>
         q.eq("workspaceId", args.id).eq("userId", userId)
       )
       .unique();
+
     const workspace = await ctx.db.get(args.id);
+
     return {
       name: workspace?.name,
       isMember: !!member,
@@ -139,6 +171,7 @@ export const getInfoByID = query({
   },
 });
 
+// Interogare pentru obținerea unui workspace după ID
 export const getById = query({
   args: { id: v.id("workspaces") },
   handler: async (ctx, args) => {
@@ -146,19 +179,23 @@ export const getById = query({
     if (!userId) {
       throw new Error("Unauthorized");
     }
+
     const member = await ctx.db
       .query("members")
       .withIndex("by_workspace_id_user_id", (q) =>
         q.eq("workspaceId", args.id).eq("userId", userId)
       )
       .unique();
+
     if (!member) {
       return null;
     }
+
     return await ctx.db.get(args.id);
   },
 });
 
+// Mutație pentru actualizarea numelui unui workspace
 export const update = mutation({
   args: { id: v.id("workspaces"), name: v.string() },
   handler: async (ctx, args) => {
@@ -166,20 +203,26 @@ export const update = mutation({
     if (!userId) {
       throw new Error("Unauthorized");
     }
+
     const member = await ctx.db
       .query("members")
       .withIndex("by_workspace_id_user_id", (q) =>
         q.eq("workspaceId", args.id).eq("userId", userId)
       )
       .unique();
+
+    // Verifică dacă utilizatorul are permisiuni de admin
     if (!member || member.role !== "admin") {
       throw new Error("Unauthorized");
     }
+
+    // Actualizează numele workspace-ului
     await ctx.db.patch(args.id, { name: args.name });
     return args.id;
   },
 });
 
+// Mutație pentru ștergerea unui workspace
 export const remove = mutation({
   args: { id: v.id("workspaces") },
   handler: async (ctx, args) => {
@@ -187,15 +230,20 @@ export const remove = mutation({
     if (!userId) {
       throw new Error("Unauthorized");
     }
+
     const member = await ctx.db
       .query("members")
       .withIndex("by_workspace_id_user_id", (q) =>
         q.eq("workspaceId", args.id).eq("userId", userId)
       )
       .unique();
+
+    // Verifică dacă utilizatorul are permisiuni de admin
     if (!member || member.role !== "admin") {
       throw new Error("Unauthorized");
     }
+
+    // Obtinem toate resursele asociate workspace-ului
     const [members, channels, conversations, messages, reactions] =
       await Promise.all([
         ctx.db
@@ -220,6 +268,7 @@ export const remove = mutation({
           .collect(),
       ]);
 
+    // Șterge toate datele asociate workspace-ului
     for (const member of members) {
       await ctx.db.delete(member._id);
     }

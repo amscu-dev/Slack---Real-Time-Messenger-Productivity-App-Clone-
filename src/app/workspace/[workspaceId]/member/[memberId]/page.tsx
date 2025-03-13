@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 "use client";
 
 import { useCreateOrGetConversation } from "@/features/conversations/api/use-create-or-get-conversation";
@@ -10,8 +12,8 @@ import { toast } from "sonner";
 import Conversation from "./_components/conversation";
 
 function MemberIdPage() {
-  const memberId = useMemberId();
-  const workspaceId = useWorkspaceId();
+  const memberId = useMemberId(); // Obține ID-ul membrului din URL
+  const workspaceId = useWorkspaceId(); // Obține ID-ul workspace-ului din URL
   const [conversationId, setConversationId] =
     useState<Id<"conversations"> | null>(null);
 

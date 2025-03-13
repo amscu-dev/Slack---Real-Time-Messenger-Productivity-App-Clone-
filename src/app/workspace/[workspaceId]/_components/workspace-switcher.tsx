@@ -1,20 +1,17 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 "use client";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useGetWorkspace } from "@/features/workspaces/api/use-get-workspace";
 import { useGetWorkspaces } from "@/features/workspaces/api/use-get-workspaces";
 import { useWorkspaceId } from "@/hooks/use-workspace-id";
-import {
-  useAppDispatch,
-  useAppSelector,
-} from "@/store/hooks/redux-store-hooks";
+import { useAppDispatch } from "@/store/hooks/redux-store-hooks";
 import { onOpenWorkspaceModal } from "@/store/slices/workspaceModalSlice";
 import { Loader, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";

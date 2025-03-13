@@ -1,7 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
-
 import { Button } from "@/components/ui/button";
-import { FaChevronDown } from "react-icons/fa";
 import {
   Dialog,
   DialogContent,
@@ -10,81 +9,91 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { TrashIcon } from "lucide-react";
-import { useState } from "react";
 import { Input } from "@/components/ui/input";
-import { DialogClose } from "@radix-ui/react-dialog";
-import { useUpdateChannel } from "@/features/channels/api/use-update-channel";
-import { useChannelId } from "@/hooks/use-channel-id";
-import { toast } from "sonner";
 import { useRemoveChannel } from "@/features/channels/api/use-remove-channel";
-import useConfirm from "@/hooks/use-confirm";
-import { useRouter } from "next/navigation";
-import { useWorkspaceId } from "@/hooks/use-workspace-id";
+import { useUpdateChannel } from "@/features/channels/api/use-update-channel";
 import { useCurrentMember } from "@/features/members/api/use-current-member";
+import { useChannelId } from "@/hooks/use-channel-id";
+import useConfirm from "@/hooks/use-confirm";
+import { useWorkspaceId } from "@/hooks/use-workspace-id";
+import { DialogClose } from "@radix-ui/react-dialog";
+import { TrashIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { FaChevronDown } from "react-icons/fa";
+import { toast } from "sonner";
 
 interface HeaderProps {
   channelName: string;
 }
 
 function Header({ channelName }: HeaderProps) {
+  // Obține ID-ul workspace-ului din contextul curent
   const workspaceId = useWorkspaceId();
-  const { data: member } = useCurrentMember({ workspaceId });
-  const router = useRouter();
+  const channelId = useChannelId(); // Obține ID-ul canalului
+  const [editOpen, setEditOpen] = useState(false); // Starea pentru a gestiona vizibilitatea dialogului de editare
+  const [value, setValue] = useState(channelName); // Starea pentru a păstra numele canalului curent
+  const { data: member } = useCurrentMember({ workspaceId }); // Obține datele membrului curent
   const [ConfirmDialog, confirm] = useConfirm(
-    "Delete this channel?",
-    "You are about to delete this channel. This action is irreversible!"
+    "Șterge acest canal?",
+    "Veți șterge acest canal. Această acțiune este ireversibilă!"
   );
-  const channelId = useChannelId();
-  const [editOpen, setEditOpen] = useState(false);
-  const [value, setValue] = useState(channelName);
+
+  const router = useRouter();
+
+  // Mutation pentru actualizarea și ștergerea canalelor
   const { mutate: updateChannel, isPending: isUpdatingChannel } =
     useUpdateChannel();
   const { mutate: removeChannel, isPending: isRemovingChannel } =
     useRemoveChannel();
 
+  // Deschide dialogul de editare doar dacă utilizatorul curent este admin
   const handleEditOpen = (value: boolean) => {
     if (member?.role !== "admin") return;
     setEditOpen(true);
   };
 
+  // Manevrarea ștergerii canalului după confirmarea utilizatorului
   const handleDelete = async () => {
     const ok = await confirm();
     if (!ok) {
       return;
     }
 
+    // Efectuează acțiunea de ștergere și gestionează succesul / eroarea
     removeChannel(
       { id: channelId },
       {
         onSuccess: () => {
-          toast.success("Channel deleted!");
+          toast.success("Canal șters!");
           router.push(`/workspace/${workspaceId}`);
         },
         onError: () => {
-          toast.error("Failed to remove channel!");
+          toast.error("Eșec la ștergerea canalului!");
         },
       }
     );
   };
 
+  // Manevrarea schimbării numelui canalului în câmpul de input
   const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
-    const value = e.target.value.replace(/\s+/g, "-").toLowerCase();
+    const value = e.target.value.replace(/\s+/g, "-").toLowerCase(); // Normalizează inputul
     setValue(value);
   };
 
+  // Trimiterea numelui actualizat al canalului către API
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     updateChannel(
       { id: channelId, name: value },
       {
         onSuccess: () => {
-          toast.success("Channel Updated!");
+          toast.success("Canal actualizat!");
           setEditOpen(false);
         },
         onError: () => {
-          toast.error("Failed to update channel!");
+          toast.error("Eșec la actualizarea canalului!");
         },
       }
     );

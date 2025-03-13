@@ -1,6 +1,5 @@
 "use client";
 import {
-  Command,
   CommandDialog,
   CommandEmpty,
   CommandGroup,
@@ -8,18 +7,16 @@ import {
   CommandItem,
   CommandList,
   CommandSeparator,
-  CommandShortcut,
 } from "@/components/ui/command";
 
 import { Button } from "@/components/ui/button";
+import useGetChannels from "@/features/channels/api/use-get-channels";
+import { useGetMembers } from "@/features/members/api/use-get-members";
 import { useGetWorkspace } from "@/features/workspaces/api/use-get-workspace";
 import { useWorkspaceId } from "@/hooks/use-workspace-id";
 import { Info, Search } from "lucide-react";
-import { useState } from "react";
-import { useGetMembers } from "@/features/members/api/use-get-members";
-import useGetChannels from "@/features/channels/api/use-get-channels";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 function Toolbar() {
   const workspaceId = useWorkspaceId();

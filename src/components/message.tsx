@@ -1,19 +1,20 @@
+import { useRemoveMessage } from "@/features/messages/api/use-remove-message";
+import { useUpdateMessage } from "@/features/messages/api/use-update-message";
+import { useToggleReaction } from "@/features/reactions/api/use-toggle-reaction";
+import useConfirm from "@/hooks/use-confirm";
+import { usePanel } from "@/hooks/use-panel";
+import { cn } from "@/lib/utils";
 import { format, isToday, isYesterday } from "date-fns";
-import { Doc, Id } from "../../convex/_generated/dataModel";
 import dynamic from "next/dynamic";
+import { useRef } from "react";
+import { toast } from "sonner";
+import { Doc, Id } from "../../convex/_generated/dataModel";
 import Hint from "./hint";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import Reactions from "./reactions";
+import ThreadBar from "./thread-bar";
 import Thumbnail from "./thumbnail";
 import Toolbar from "./toolbar";
-import { useUpdateMessage } from "@/features/messages/api/use-update-message";
-import { toast } from "sonner";
-import { cn } from "@/lib/utils";
-import { useRemoveMessage } from "@/features/messages/api/use-remove-message";
-import useConfirm from "@/hooks/use-confirm";
-import { useToggleReaction } from "@/features/reactions/api/use-toggle-reaction";
-import Reactions from "./reactions";
-import { usePanel } from "@/hooks/use-panel";
-import ThreadBar from "./thread-bar";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
 const Renderer = dynamic(() => import("@/components/renderer"), { ssr: false });
 const Editor = dynamic(() => import("@/components/editor"), { ssr: false });
@@ -67,6 +68,7 @@ function Message({
   threadName,
   threadTimestamp,
 }: MessageProps) {
+  const isToolbarVisibleRef = useRef<boolean>(true);
   const { parentMessageId, onOpenMessage, onOpenProfile, onClose } = usePanel();
   const [ConfirmDialog, confirm] = useConfirm(
     "Delete message",
@@ -151,6 +153,7 @@ function Message({
                   defaultValue={JSON.parse(body)}
                   onCancel={() => setEditingId(null)}
                   variant="update"
+                  isToolbarVisibleRef={isToolbarVisibleRef}
                 />
               </div>
             ) : (
@@ -217,6 +220,7 @@ function Message({
                 defaultValue={JSON.parse(body)}
                 onCancel={() => setEditingId(null)}
                 variant="update"
+                isToolbarVisibleRef={isToolbarVisibleRef}
               />
             </div>
           ) : (

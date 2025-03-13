@@ -8,16 +8,16 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 
+import { useWorkspaceId } from "@/hooks/use-workspace-id";
 import {
   useAppDispatch,
   useAppSelector,
 } from "@/store/hooks/redux-store-hooks";
 import { onCloseChannelModal } from "@/store/slices/channelModalSlice";
-import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { toast } from "sonner";
 import { useCreateChannel } from "../api/use-create-channel";
-import { useWorkspaceId } from "@/hooks/use-workspace-id";
 
 function CreateChannelModal() {
   const router = useRouter();

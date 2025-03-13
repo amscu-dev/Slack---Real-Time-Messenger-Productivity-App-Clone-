@@ -4,15 +4,16 @@ import { getAuthUserId } from "@convex-dev/auth/server";
 
 export const createOrGet = mutation({
   args: {
-    memberId: v.id("members"),
-    workspaceId: v.id("workspaces"),
+    memberId: v.id("members"), // ID-ul membrului cu care se inițiază conversația
+    workspaceId: v.id("workspaces"), // ID-ul workspace-ului în care are loc conversația
   },
   handler: async (ctx, args) => {
-    const userId = await getAuthUserId(ctx);
+    const userId = await getAuthUserId(ctx); // Obține ID-ul utilizatorului autentificat
     if (!userId) {
-      throw new Error("Unauthorized");
+      throw new Error("Unauthorized"); // Aruncă eroare dacă utilizatorul nu este autentificat
     }
 
+    // Verifică dacă utilizatorul autentificat este membru al workspace-ului
     const currentMember = await ctx.db
       .query("members")
       .withIndex("by_workspace_id_user_id", (q) =>
@@ -20,12 +21,13 @@ export const createOrGet = mutation({
       )
       .unique();
 
-    const otherMember = await ctx.db.get(args.memberId);
+    const otherMember = await ctx.db.get(args.memberId); // Obține detaliile celuilalt membru
 
     if (!currentMember || !otherMember) {
-      throw new Error("Member not found");
+      throw new Error("Member not found"); // Aruncă eroare dacă unul dintre membri nu există
     }
 
+    // Verifică dacă există deja o conversație între acești doi membri în același workspace
     const existingConversation = await ctx.db
       .query("conversations")
       .filter((q) => q.eq(q.field("workspaceId"), args.workspaceId))
@@ -42,15 +44,18 @@ export const createOrGet = mutation({
         )
       )
       .unique();
+
     if (existingConversation) {
-      return existingConversation._id;
+      return existingConversation._id; // Returnează ID-ul conversației existente dacă aceasta există deja
     }
+
+    // Creează o nouă conversație dacă nu există deja
     const conversationId = await ctx.db.insert("conversations", {
       workspaceId: args.workspaceId,
       memberOneId: currentMember._id,
       memberTwoId: otherMember._id,
     });
 
-    return conversationId;
+    return conversationId; // Returnează ID-ul noii conversații
   },
 });

@@ -1,6 +1,19 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Id } from "../../../../convex/_generated/dataModel";
-import { useGetMember } from "../api/use-get-member";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Separator } from "@/components/ui/separator";
+import { useRemoveMember } from "@/features/members/api/use-remove-member";
+import { useUpdateMember } from "@/features/members/api/use-update-member";
+import useConfirm from "@/hooks/use-confirm";
+import { useWorkspaceId } from "@/hooks/use-workspace-id";
 import {
   AlertTriangle,
   ChevronDownIcon,
@@ -8,26 +21,12 @@ import {
   MailIcon,
   XIcon,
 } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
-import { useUpdateMember } from "@/features/members/api/use-update-member";
-import { useRemoveMember } from "@/features/members/api/use-remove-member";
-import { useCurrentMember } from "../api/use-current-member";
-import { useWorkspaceId } from "@/hooks/use-workspace-id";
-import { toast } from "sonner";
-import useConfirm from "@/hooks/use-confirm";
 import { useRouter } from "next/navigation";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { toast } from "sonner";
+import { Id } from "../../../../convex/_generated/dataModel";
+import { useCurrentMember } from "../api/use-current-member";
+import { useGetMember } from "../api/use-get-member";
 
 interface ProfileProps {
   memberId: Id<"members">;
@@ -59,10 +58,10 @@ function Profile({ memberId, onClose }: ProfileProps) {
     id: memberId,
   });
 
-  const { mutate: updateMember, isLoading: isUpdatingMember } =
+  const { mutate: updateMember, isPending: isUpdatingMember } =
     useUpdateMember();
 
-  const { mutate: removeMember, isLoading: isRemovingMember } =
+  const { mutate: removeMember, isPending: isRemovingMember } =
     useRemoveMember();
 
   const avatarFallback = member?.user.name?.charAt(0).toUpperCase();

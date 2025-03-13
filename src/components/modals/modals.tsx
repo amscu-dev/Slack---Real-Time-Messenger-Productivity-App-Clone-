@@ -5,6 +5,7 @@ import CreateWorkspaceModal from "@/features/workspaces/components/create-worksp
 import { useEffect, useState } from "react";
 
 function Modals() {
+  // Evitam erorile de hidratare folosim aceasta tehnica
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
     setMounted(true);

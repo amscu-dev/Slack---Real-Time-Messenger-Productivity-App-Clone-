@@ -3,14 +3,12 @@ import { api } from "../../../../convex/_generated/api";
 import { useCallback, useMemo, useState } from "react";
 import { Id } from "../../../../convex/_generated/dataModel";
 
-// Incercam sa imitam comportamnetul React-Query
 type RequestType = {
   id: Id<"members">;
   role: "admin" | "member";
 };
 type ResponseType = Id<"members"> | null;
-// În acest type Options, proprietățile onSuccess, onError și onSettled sunt funcții definite ca proprietăți opționale ale obiectului options.
-// Definirea unei funcții ca proprietate într-un obiect este echivalentă cu definirea unei funcții normale și apelarea acesteia cu un argument.
+
 type Options = {
   onSuccess?: (data: ResponseType) => void;
   onError?: (error: Error) => void;
@@ -22,13 +20,6 @@ export const useUpdateMember = () => {
   const [data, setData] = useState<ResponseType>(null);
   const [error, setError] = useState<Error | null>(null);
 
-  // V1:
-  // const [isPending, setIsPending] = useState(false);
-  // const [isSuccess, setIsSuccess] = useState(false);
-  // const [isError, setIsError] = useState(false);
-  // const [isSettled, setIsSettled] = useState(false);
-
-  // V2:
   const [status, setStatus] = useState<
     "success" | "error" | "settled" | "pending" | null
   >(null);
@@ -39,20 +30,14 @@ export const useUpdateMember = () => {
 
   const mutation = useMutation(api.members.update);
 
-  // usecallback in caz ca o vom folosi intr-un useEffect
   const mutate = useCallback(
     async (values: RequestType, options?: Options) => {
       try {
         setData(null);
         setError(null);
-        // V2:
-        setStatus("pending");
-        // V1:
-        // setIsError(false);
-        // setIsSettled(false);
-        // setIsSuccess(false);
 
-        // setIsPending(true);
+        setStatus("pending");
+
         const response = await mutation(values);
         options?.onSuccess?.(response);
         return response;
@@ -63,11 +48,8 @@ export const useUpdateMember = () => {
           throw error;
         }
       } finally {
-        // V2:
         setStatus("settled");
-        // V1:
-        // setIsPending(false);
-        // setIsSettled(true);
+
         options?.onSettled?.();
       }
     },

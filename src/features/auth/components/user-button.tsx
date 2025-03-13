@@ -7,9 +7,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useCurrentUser } from "../api/use-current-user";
-import { Loader, LogOutIcon } from "lucide-react";
 import { useAuthActions } from "@convex-dev/auth/react";
+import { Loader, LogOutIcon } from "lucide-react";
+import { useCurrentUser } from "../api/use-current-user";
 
 function UserButton() {
   const { signOut } = useAuthActions();

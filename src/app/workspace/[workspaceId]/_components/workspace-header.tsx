@@ -1,4 +1,5 @@
 "use client";
+import Hint from "@/components/hint";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -7,7 +8,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Doc } from "../../../../../convex/_generated/dataModel";
+import { useAppDispatch } from "@/store/hooks/redux-store-hooks";
+import { onOpenInviteModal } from "@/store/slices/inviteModalSlice";
+import { onOpenPreferencesModal } from "@/store/slices/preferencesModalSlice";
 import {
   ChevronDown,
   ListFilter,
@@ -15,12 +18,9 @@ import {
   SquarePen,
   Users,
 } from "lucide-react";
-import Hint from "@/components/hint";
-import PreferencesModal from "./preferences-modal";
-import { useAppDispatch } from "@/store/hooks/redux-store-hooks";
-import { onOpenPreferencesModal } from "@/store/slices/preferencesModalSlice";
-import { onOpenInviteModal } from "@/store/slices/inviteModalSlice";
+import { Doc } from "../../../../../convex/_generated/dataModel";
 import InviteModal from "./invite-modal";
+import PreferencesModal from "./preferences-modal";
 
 interface WorkspaceHeaderProps {
   workspace: Doc<"workspaces">;
